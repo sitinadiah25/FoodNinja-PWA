@@ -1,7 +1,8 @@
 //service worker : can add things to cache so it works offline 
 
 //update version every time changes are made in static files
-const staticCacheName = 'site-static-v2';
+const staticCacheName = 'site-static-v1'; //app shell assets
+const dynamicCacheName = 'site-dynamic-v1';
 const assets = [
     '/',
     'index.html',
@@ -12,7 +13,8 @@ const assets = [
     '/css/materialize.min.css',
     '/img/dish.png',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://fonts.gstatic.com/s/materialicons/v50/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2'
+    'https://fonts.gstatic.com/s/materialicons/v50/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
+    '/pages/fallback.html',
 ];
 
 //install service worker (only runs if service worker file is changed)
@@ -36,7 +38,7 @@ self.addEventListener('activate', evt => {
             //if all promises (keys) is resolved, then promise.all will resolve too
             //keys is an array of promises
             return Promise.all(keys
-                .filter(key => key !== staticCacheName) // caches want to be deleted stays in array 
+                .filter(key => key !== staticCacheName && key !== dynamicCacheName) // caches want to be deleted stays in array 
                 .map(key => caches.delete(key)) // delete all the filtered caches
             )
         })
@@ -48,7 +50,12 @@ self.addEventListener('fetch', evt => {
     // console.log('fetch event', evt);
     evt.respondWith(
         caches.match(evt.request).then(cacheRes => {
-            return cacheRes || fetch(evt.request);
-        })
+            return cacheRes || fetch(evt.request).then(fetchRes => {
+                return caches.open(dynamicCacheName).then(cache => {
+                    cache.put(evt.request.url, fetchRes.clone());
+                    return fetchRes;
+                });
+            });
+        }).catch(() => caches.match('/pages/fallback.html'))
     );
 });
