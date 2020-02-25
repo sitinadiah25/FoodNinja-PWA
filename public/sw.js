@@ -1,20 +1,20 @@
 //service worker : can add things to cache so it works offline 
 
 //update version every time changes are made in static files
-const staticCacheName = 'site-static-v3'; //app shell assets
-const dynamicCacheName = 'site-dynamic-v5';
+const staticCacheName = 'site-static-v2'; //app shell assets
+const dynamicCacheName = 'site-dynamic-v2';
 const assets = [
     '/',
-    'index.html',
+    '/index.html',
     '/js/app.js',
     '/js/ui.js',
     '/js/materialize.min.js',
-    '/css/styles.css', 
+    '/css/styles.css',
     '/css/materialize.min.css',
     '/img/dish.png',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
-    'https://fonts.gstatic.com/s/materialicons/v50/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-    '/pages/fallback.html',
+    'https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
+    '/pages/fallback.html'
 ];
 
 //cache size limit function
